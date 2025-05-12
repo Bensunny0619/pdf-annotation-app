@@ -1,3 +1,33 @@
+# PDF Annotation Tool
+
+A web-based application for viewing, annotating, and signing PDF documents with highlight and signature capabilities.
+
+## Features
+
+### Core Functionality
+- 📄 **PDF Viewer** - View and navigate through PDF documents
+- 🖋️ **Digital Signatures** - Add handwritten signatures to documents
+- 💾 **Export Annotations** - Save annotated PDFs with all markups preserved
+
+### Signature Features
+- ✍️ Canvas-based signature drawing
+- 🧹 Clear/reset functionality
+- 📏 Proportional scaling in exported PDFs
+
+## Technologies Used
+- **Frontend**: Next.js, React
+- **PDF Library**: React-pdf-viewer + PDF-Lib
+- **Signature**: react-signature-canvas
+- **Styling**: Tailwind CSS
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Bensunny0619/pdf-annotation
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

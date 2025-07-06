@@ -1,4 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
+"use client";
+
+import { useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
 const SignaturePad = ({ onSave }) => {
@@ -6,47 +8,55 @@ const SignaturePad = ({ onSave }) => {
     const [isEmpty, setIsEmpty] = useState(true);
 
     const handleClear = () => {
-        sigCanvas.current.clear();
-        setIsEmpty(true);
+        if (sigCanvas.current) {
+            sigCanvas.current.clear();
+            setIsEmpty(true);
+        }
     };
 
     const handleSave = () => {
-        if (!sigCanvas.current.isEmpty()) {
-            const signatureData = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
-            onSave(signatureData);
-            alert('Signature saved successfully!');
+        console.log("Save button clicked"); // ✅ This must log!
+        if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
+            const dataUrl = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
+            console.log("Generated signature data URL:", dataUrl); // ✅ Debug
+            onSave(dataUrl);
+        } else {
+            alert("Signature is empty!");
         }
     };
 
     return (
         <div className="bg-white rounded-xl shadow-md p-6">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">Add Signature</h3>
-            <div className="border-2 border-dashed border-gray-200 rounded-lg mb-4">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg mb-4">
                 <SignatureCanvas
                     ref={sigCanvas}
                     penColor="black"
+                    onEnd={() => {
+                        if (sigCanvas.current) {
+                            setIsEmpty(sigCanvas.current.isEmpty());
+                        }
+                    }}
                     canvasProps={{
                         width: 500,
                         height: 200,
-                        className: 'w-full h-48 bg-white',
+                        className: 'bg-white w-full h-48',
                     }}
-                    onBegin={() => setIsEmpty(false)}
-                    onEnd={() => setIsEmpty(sigCanvas.current.isEmpty())}
                 />
             </div>
-            
+
             <div className="flex gap-4">
                 <button
                     onClick={handleClear}
-                    className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                    className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg"
                 >
                     Clear
                 </button>
                 <button
                     onClick={handleSave}
                     disabled={isEmpty}
-                    className={`flex-1 px-4 py-2 text-white rounded-lg transition-colors ${
-                        !isEmpty ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
+                    className={`flex-1 px-4 py-2 text-white rounded-lg ${
+                        isEmpty ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                     }`}
                 >
                     Save Signature

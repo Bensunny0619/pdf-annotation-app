@@ -18,6 +18,7 @@ export default function Home() {
     const [file, setFile] = useState(null);
     const [signature, setSignature] = useState(null);
     const [showSignaturePad, setShowSignaturePad] = useState(false);
+    const [targetPage, setTargetPage] = useState('last'); // <-- Add this line
     const pdfRef = useRef(null); // Reference for the PDF container
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -53,11 +54,23 @@ export default function Home() {
 
                         {showSignaturePad && (
                             <SignaturePad 
-                                onSave={(signature) => {
-                                    setSignature(signature);
-                                    setShowSignaturePad(false);
-                                }}
+                                onSave={(sig) => {
+                                    setSignature(sig);
+                                    setShowSignaturePad(false); // Hide after saving
+                                }} 
                             />
+                        )}
+
+                        {signature && (
+                            <>
+                                <div className="text-green-600 text-sm mt-2">Signature saved!</div>
+                                <img
+                                    src={signature}
+                                    alt="Saved Signature Preview"
+                                    className="mt-4 border border-gray-300 rounded"
+                                    width={200}
+                                />
+                            </>
                         )}
                     </div>
 
@@ -68,7 +81,6 @@ export default function Home() {
                                 <PdfViewer 
                                     file={file} 
                                 />
-                                <SignaturePad onSave={setSignature} />
                             </div>
                         ) : (
                             <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
@@ -79,12 +91,31 @@ export default function Home() {
                     </div>
                 </div>
 
+                {/* Page selection dropdown */}
+                {file && (
+                    <div className="mt-4">
+                        <label className="text-sm text-gray-600 mr-2">Place signature on:</label>
+                        <select
+                            value={targetPage}
+                            onChange={(e) => setTargetPage(e.target.value)}
+                            className="border border-gray-300 rounded px-2 py-1"
+                        >
+                            <option value="last">Last Page</option>
+                            <option value="0">Page 1</option>
+                            <option value="1">Page 2</option>
+                            <option value="2">Page 3</option>
+                            {/* You can dynamically generate these if you extract page count */}
+                        </select>
+                    </div>
+                )}
+
                 {/* Export Button */}
                 {file && (
                     <div className="mt-6">
                         <PdfLibExporter 
                             fileUrl={file} 
-                            signature={signature} 
+                            signature={signature}
+                            targetPage={targetPage} // <-- Pass to exporter
                         />
                     </div>
                 )}

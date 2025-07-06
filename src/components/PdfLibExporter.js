@@ -2,7 +2,7 @@
 
 import { PDFDocument } from 'pdf-lib';
 
-export default function PdfLibExporter({ fileUrl, signature }) {
+export default function PdfLibExporter({ fileUrl, signature, targetPage }) {
     const exportPdf = async () => {
         try {
             // Load the existing PDF
@@ -11,7 +11,11 @@ export default function PdfLibExporter({ fileUrl, signature }) {
 
             // Add signature if exists
             if (signature) {
-                const page = pdfDoc.getPage(0);
+                const totalPages = pdfDoc.getPageCount();
+                const pageIndex =
+                    targetPage === 'last' ? totalPages - 1 : parseInt(targetPage, 10);
+
+                const page = pdfDoc.getPage(pageIndex);
                 const pngImage = await pdfDoc.embedPng(signature);
                 page.drawImage(pngImage, {
                     x: 50,
@@ -41,7 +45,12 @@ export default function PdfLibExporter({ fileUrl, signature }) {
     return (
         <button
             onClick={exportPdf}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            disabled={!signature}
+            className={`mt-4 px-4 py-2 rounded-md ${
+                signature
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+            }`}
         >
             Export PDF
         </button>
